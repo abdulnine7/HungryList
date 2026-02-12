@@ -119,9 +119,10 @@ Automatic backups:
 - `SESSION_SECRET`
 - `/mnt/tank/apps/hungrylist/data` to your TrueNAS dataset path
 - `REPLACE_WITH_CLOUDFLARE_TUNNEL_TOKEN`
-3. In TrueNAS go to `Apps > Discover Apps > Custom App > Install via YAML`.
-4. Paste the YAML content and deploy.
-5. In Cloudflare Zero Trust, create a tunnel hostname pointing to `http://hungrylist:8080`.
+3. Keep the `build.context` release tag as-is unless you intentionally want a different version.
+4. In TrueNAS go to `Apps > Discover Apps > Custom App > Install via YAML`.
+5. Paste the YAML content and deploy.
+6. In Cloudflare Zero Trust, create a tunnel hostname pointing to `http://hungrylist:8080`.
 
 Direct download URL (latest release asset):
 
@@ -136,6 +137,7 @@ Notes:
 - If you do not want direct LAN access, remove the `ports` block from the YAML.
 - If you plan to use only HTTPS through Cloudflare, keep `COOKIE_SECURE=true`.
 - If you need HTTP login via LAN IP/port, set `COOKIE_SECURE=false`.
+- The release YAML builds HungryList directly from the GitHub release tag.
 
 ## Security Hardening Checklist
 
