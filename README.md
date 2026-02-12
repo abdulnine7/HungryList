@@ -113,16 +113,19 @@ Automatic backups:
 
 ## TrueNAS + cloudflared (Install via YAML)
 
-1. Open the latest release and download `truenas-custom-app.yaml`.
-2. Edit these values in the YAML:
+1. Set the GHCR package visibility to public once:
+- Open `https://github.com/users/abdulnine7/packages/container/hungrylist`
+- Go to **Package settings** and set visibility to **Public**
+2. Open the latest release and download `truenas-custom-app.yaml`.
+3. Edit these values in the YAML:
 - `HUNGRYLIST_PIN`
 - `SESSION_SECRET`
 - `/mnt/tank/apps/hungrylist/data` to your TrueNAS dataset path
 - `REPLACE_WITH_CLOUDFLARE_TUNNEL_TOKEN`
-3. (Optional) Change `image: ghcr.io/abdulnine7/hungrylist:v1.0.2` to a newer release tag.
-4. In TrueNAS go to `Apps > Discover Apps > Custom App > Install via YAML`.
-5. Paste the YAML content and deploy.
-6. In Cloudflare Zero Trust, create a tunnel hostname pointing to `http://hungrylist:8080`.
+4. (Optional) Change `image: ghcr.io/abdulnine7/hungrylist:v1.0.2` to a newer release tag.
+5. In TrueNAS go to `Apps > Discover Apps > Custom App > Install via YAML`.
+6. Paste the YAML content and deploy.
+7. In Cloudflare Zero Trust, create a tunnel hostname pointing to `http://hungrylist:8080`.
 
 Direct download URL (latest release asset):
 
