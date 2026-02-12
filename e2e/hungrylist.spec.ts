@@ -48,6 +48,7 @@ test.describe.serial('HungryList critical flows', () => {
     await expect(page.getByRole('button', { name: `Toggle ${itemName}` })).toBeVisible();
 
     await page.getByRole('button', { name: `Toggle ${itemName}` }).click();
+    await expect(page.getByRole('button', { name: `Delete ${itemName}` })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Add item', exact: true }).click();
     const duplicateItemModal = page.locator('.modal.modal-open').first();
@@ -55,6 +56,8 @@ test.describe.serial('HungryList critical flows', () => {
     await duplicateItemModal.getByRole('button', { name: 'Add Item', exact: true }).click();
     await expect(page.getByText('This item already exists in the selected section.')).toBeVisible();
     await duplicateItemModal.getByRole('button', { name: 'Cancel', exact: true }).click();
+
+    await page.getByRole('button', { name: 'My List' }).click();
 
     page.once('dialog', (dialog) => dialog.accept());
     await page.getByRole('button', { name: `Delete ${itemName}` }).click();

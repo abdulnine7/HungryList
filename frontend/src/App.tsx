@@ -462,6 +462,7 @@ function App() {
                   key={item.id}
                   item={item}
                   section={itemSectionLookup[item.sectionId]}
+                  showActions={activeTab === 'myList'}
                   onToggleChecked={handleItemCheckToggle}
                   onToggleFavorite={handleFavoriteToggle}
                   onToggleRunningLow={handleRunningLowToggle}

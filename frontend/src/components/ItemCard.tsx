@@ -18,6 +18,7 @@ export const ItemCard = ({
   onToggleRunningLow,
   onEdit,
   onDelete,
+  showActions = true,
 }: {
   item: Item;
   section?: Section;
@@ -26,6 +27,7 @@ export const ItemCard = ({
   onToggleRunningLow: (item: Item) => void;
   onEdit: (item: Item) => void;
   onDelete: (item: Item) => void;
+  showActions?: boolean;
 }) => {
   const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -76,47 +78,49 @@ export const ItemCard = ({
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2" onClick={(event) => event.stopPropagation()}>
-          <button
-            type="button"
-            className={clsx('btn btn-sm btn-outline', { 'btn-secondary': item.favorite })}
-            aria-label={item.favorite ? `Remove ${item.name} from favorites` : `Add ${item.name} to favorites`}
-            onClick={() => onToggleFavorite(item)}
-          >
-            <Heart size={14} fill={item.favorite ? 'currentColor' : 'none'} />
-            Favorite
-          </button>
+        {showActions ? (
+          <div className="flex flex-wrap items-center gap-2" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              className={clsx('btn btn-sm btn-outline', { 'btn-secondary': item.favorite })}
+              aria-label={item.favorite ? `Remove ${item.name} from favorites` : `Add ${item.name} to favorites`}
+              onClick={() => onToggleFavorite(item)}
+            >
+              <Heart size={14} fill={item.favorite ? 'currentColor' : 'none'} />
+              Favorite
+            </button>
 
-          <button
-            type="button"
-            className={clsx('btn btn-sm btn-outline', { 'btn-accent': item.runningLow })}
-            aria-label={`Toggle running low for ${item.name}`}
-            onClick={() => onToggleRunningLow(item)}
-          >
-            <AlertTriangle size={14} />
-            Running Low
-          </button>
+            <button
+              type="button"
+              className={clsx('btn btn-sm btn-outline', { 'btn-accent': item.runningLow })}
+              aria-label={`Toggle running low for ${item.name}`}
+              onClick={() => onToggleRunningLow(item)}
+            >
+              <AlertTriangle size={14} />
+              Running Low
+            </button>
 
-          <button
-            type="button"
-            className="btn btn-sm btn-outline"
-            aria-label={`Edit ${item.name}`}
-            onClick={() => onEdit(item)}
-          >
-            <Pencil size={14} />
-            Edit
-          </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              aria-label={`Edit ${item.name}`}
+              onClick={() => onEdit(item)}
+            >
+              <Pencil size={14} />
+              Edit
+            </button>
 
-          <button
-            type="button"
-            className="btn btn-sm btn-outline btn-error"
-            aria-label={`Delete ${item.name}`}
-            onClick={() => onDelete(item)}
-          >
-            <Trash2 size={14} />
-            Delete
-          </button>
-        </div>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline btn-error"
+              aria-label={`Delete ${item.name}`}
+              onClick={() => onDelete(item)}
+            >
+              <Trash2 size={14} />
+              Delete
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );
