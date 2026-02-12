@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   Plus,
   Search,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { BackupRestoreModal } from './components/BackupRestoreModal';
+import { FilterModal } from './components/FilterModal';
 import { ItemCard } from './components/ItemCard';
-import { defaultFilters, ItemFilters, type ListFilters } from './components/ItemFilters';
+import { defaultFilters, type ListFilters } from './components/ItemFilters';
 import { ItemModal } from './components/ItemModal';
 import { LoginView } from './components/LoginView';
 import { SectionChips } from './components/SectionChips';
@@ -39,14 +41,16 @@ function App() {
     'hungrylist.secondarySectionFilter',
     'all',
   );
-  const [search, setSearch] = usePersistentState<string>('hungrylist.search', '');
-  const [filters, setFilters] = usePersistentState<ListFilters>('hungrylist.filters', defaultFilters);
+  const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState<ListFilters>(defaultFilters);
 
   const [itemModalOpen, setItemModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | undefined>();
 
   const [sectionModalOpen, setSectionModalOpen] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | undefined>();
+
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
 
   const [restoreModalOpen, setRestoreModalOpen] = useState(false);
   const [restoringBackup, setRestoringBackup] = useState<BackupRecord | undefined>();
@@ -89,6 +93,32 @@ function App() {
       setSecondarySectionFilter('all');
     }
   }, [secondarySectionFilter, sections, setSecondarySectionFilter]);
+
+  useEffect(() => {
+    if (activeTab === 'settings') {
+      setFilterModalOpen(false);
+    }
+  }, [activeTab]);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filters.checked !== defaultFilters.checked) {
+      count += 1;
+    }
+    if (filters.priority !== defaultFilters.priority) {
+      count += 1;
+    }
+    if (filters.sort !== defaultFilters.sort) {
+      count += 1;
+    }
+    if (filters.favoritesOnly !== defaultFilters.favoritesOnly) {
+      count += 1;
+    }
+    if (filters.runningLowOnly !== defaultFilters.runningLowOnly) {
+      count += 1;
+    }
+    return count;
+  }, [filters]);
 
   const itemQueryParams = useMemo(() => {
     if (!listTabs.includes(activeTab)) {
@@ -350,7 +380,15 @@ function App() {
             />
           ) : null}
 
-          {activeTab !== 'settings' ? <ItemFilters filters={filters} onChange={setFilters} /> : null}
+          {activeTab !== 'settings' ? (
+            <div className="flex justify-end">
+              <button type="button" className="btn btn-outline btn-sm gap-2" onClick={() => setFilterModalOpen(true)}>
+                <SlidersHorizontal size={15} />
+                Filters
+                {activeFilterCount > 0 ? <span className="badge badge-primary badge-sm">{activeFilterCount}</span> : null}
+              </button>
+            </div>
+          ) : null}
 
           {activeTab === 'settings' ? (
             <SettingsView
@@ -500,6 +538,14 @@ function App() {
         onConfirm={async (backupId, createCurrentBackup) => {
           await backupRestoreMutation.mutateAsync({ id: backupId, createCurrentBackup });
         }}
+      />
+
+      <FilterModal
+        open={filterModalOpen}
+        filters={filters}
+        onChange={setFilters}
+        onReset={() => setFilters(defaultFilters)}
+        onClose={() => setFilterModalOpen(false)}
       />
 
       {authError?.status && authError.status !== 401 ? (

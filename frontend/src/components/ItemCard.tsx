@@ -49,7 +49,7 @@ export const ItemCard = ({
       <div className="card-body gap-3 p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1">
-            <h3 className={clsx('text-base font-semibold', { 'line-through': item.checked })}>{item.name}</h3>
+            <h3 className={clsx('text-lg font-bold leading-tight', { 'line-through': item.checked })}>{item.name}</h3>
             {item.description ? <p className="text-sm text-base-content/70">{item.description}</p> : null}
           </div>
           <input
