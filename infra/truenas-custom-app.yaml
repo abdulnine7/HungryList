@@ -1,9 +1,6 @@
 services:
   hungrylist:
-    image: hungrylist:v1.0.0
-    build:
-      context: https://github.com/abdulnine7/HungryList.git#v1.0.0
-      dockerfile: Dockerfile
+    image: ghcr.io/abdulnine7/hungrylist:v1.0.1
     container_name: hungrylist
     restart: unless-stopped
     environment:
