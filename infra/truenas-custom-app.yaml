@@ -1,6 +1,6 @@
 services:
   hungrylist:
-    image: ghcr.io/abdulnine7/hungrylist:v1.0.1
+    image: ghcr.io/abdulnine7/hungrylist:v1.0.2
     container_name: hungrylist
     restart: unless-stopped
     environment:

@@ -119,7 +119,7 @@ Automatic backups:
 - `SESSION_SECRET`
 - `/mnt/tank/apps/hungrylist/data` to your TrueNAS dataset path
 - `REPLACE_WITH_CLOUDFLARE_TUNNEL_TOKEN`
-3. (Optional) Change `image: ghcr.io/abdulnine7/hungrylist:v1.0.1` to a newer release tag.
+3. (Optional) Change `image: ghcr.io/abdulnine7/hungrylist:v1.0.2` to a newer release tag.
 4. In TrueNAS go to `Apps > Discover Apps > Custom App > Install via YAML`.
 5. Paste the YAML content and deploy.
 6. In Cloudflare Zero Trust, create a tunnel hostname pointing to `http://hungrylist:8080`.
