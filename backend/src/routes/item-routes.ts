@@ -27,7 +27,7 @@ const itemQuerySchema = z.object({
   search: z.string().optional(),
   checked: z.enum(['all', 'checked', 'unchecked']).optional().default('all'),
   priority: z.enum(['must', 'soon', 'optional']).optional(),
-  sort: z.enum(['updated_desc', 'name_asc', 'priority', 'created_desc']).optional().default('updated_desc'),
+  sort: z.enum(['updated_desc', 'name_asc', 'priority', 'created_desc']).optional().default('name_asc'),
   favoritesOnly: z
     .enum(['true', 'false'])
     .optional()
@@ -57,6 +57,7 @@ itemRouter.get(
       sort: query.sort,
       favoritesOnly: query.favoritesOnly,
       runningLowOnly: query.runningLowOnly,
+      view: query.view,
     };
 
     if (query.view === 'favorites') {

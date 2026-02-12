@@ -53,3 +53,53 @@ describe('item duplicate and restore behavior', () => {
     expect(restored.body.data.id).toBe(itemId);
   });
 });
+
+describe('item ordering behavior', () => {
+  beforeEach(() => {
+    resetDatabase();
+  });
+
+  it('defaults to alphabetical order and pushes checked items to the bottom', async () => {
+    const agent = await login();
+    const sectionResponse = await agent.get('/api/sections');
+    const sectionId = sectionResponse.body.data[0].id as string;
+
+    const banana = await agent.post('/api/items').send({
+      sectionId,
+      name: 'Banana',
+      description: '',
+      priority: 'soon',
+      remindEveryDays: 0,
+    });
+    expect(banana.status).toBe(201);
+
+    const apple = await agent.post('/api/items').send({
+      sectionId,
+      name: 'Apple',
+      description: '',
+      priority: 'soon',
+      remindEveryDays: 0,
+    });
+    expect(apple.status).toBe(201);
+
+    const carrot = await agent.post('/api/items').send({
+      sectionId,
+      name: 'Carrot',
+      description: '',
+      priority: 'soon',
+      remindEveryDays: 0,
+    });
+    expect(carrot.status).toBe(201);
+
+    const initialList = await agent.get(`/api/items?sectionId=${sectionId}`);
+    expect(initialList.status).toBe(200);
+    expect(initialList.body.data.map((item: { name: string }) => item.name)).toEqual(['Apple', 'Banana', 'Carrot']);
+
+    const checkApple = await agent.patch(`/api/items/${apple.body.data.id}/check`).send({});
+    expect(checkApple.status).toBe(200);
+
+    const reorderedList = await agent.get(`/api/items?sectionId=${sectionId}`);
+    expect(reorderedList.status).toBe(200);
+    expect(reorderedList.body.data.map((item: { name: string }) => item.name)).toEqual(['Banana', 'Carrot', 'Apple']);
+  });
+});

@@ -36,6 +36,7 @@ export type ItemFilters = {
   favoritesOnly?: boolean;
   runningLowOnly?: boolean;
   remindersOnly?: boolean;
+  view?: 'myList' | 'nextTrip' | 'favorites' | 'runningLow' | 'reminders';
 };
 
 type ItemRow = {
@@ -149,14 +150,16 @@ export const listItems = (filters: ItemFilters): Item[] => {
     );
   }
 
+  const effectiveSort = filters.view === 'nextTrip' ? 'name_asc' : filters.sort;
+  const checkedOrderPrefix = filters.checked === 'all' ? 'i.checked ASC, ' : '';
   const orderBy =
-    filters.sort === 'name_asc'
-      ? 'i.name COLLATE NOCASE ASC'
-      : filters.sort === 'priority'
-        ? "CASE i.priority WHEN 'must' THEN 1 WHEN 'soon' THEN 2 ELSE 3 END ASC, i.updated_at DESC"
-        : filters.sort === 'created_desc'
-          ? 'i.created_at DESC'
-          : 'i.updated_at DESC';
+    effectiveSort === 'name_asc'
+      ? `${checkedOrderPrefix}i.name COLLATE NOCASE ASC, i.created_at ASC`
+      : effectiveSort === 'priority'
+        ? `${checkedOrderPrefix}CASE i.priority WHEN 'must' THEN 1 WHEN 'soon' THEN 2 ELSE 3 END ASC, i.name COLLATE NOCASE ASC`
+        : effectiveSort === 'created_desc'
+          ? `${checkedOrderPrefix}i.created_at DESC, i.name COLLATE NOCASE ASC`
+          : `${checkedOrderPrefix}i.updated_at DESC, i.name COLLATE NOCASE ASC`;
 
   const rows = db
     .prepare(

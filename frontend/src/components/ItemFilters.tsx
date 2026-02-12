@@ -11,7 +11,7 @@ export type ListFilters = {
 export const defaultFilters: ListFilters = {
   checked: 'all',
   priority: 'all',
-  sort: 'updated_desc',
+  sort: 'name_asc',
   favoritesOnly: false,
   runningLowOnly: false,
 };
@@ -61,9 +61,9 @@ export const ItemFilters = ({
           value={filters.sort}
           onChange={(event) => onChange({ ...filters, sort: event.target.value as ListFilters['sort'] })}
         >
+          <option value="name_asc">Alphabetical (A-Z)</option>
           <option value="updated_desc">Recently Updated</option>
           <option value="created_desc">Recently Added</option>
-          <option value="name_asc">Name A-Z</option>
           <option value="priority">Priority</option>
         </select>
       </label>
