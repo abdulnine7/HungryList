@@ -3,6 +3,23 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ApiError } from '../lib/api';
 import type { Section } from '../lib/types';
 
+const SECTION_ICON_OPTIONS = [
+  { value: '🛒', label: 'General Grocery' },
+  { value: '🌶️', label: 'Spicy' },
+  { value: '🥢', label: 'Noodles' },
+  { value: '🥬', label: 'Produce' },
+  { value: '🥩', label: 'Meat' },
+  { value: '🐟', label: 'Seafood' },
+  { value: '🥛', label: 'Dairy' },
+  { value: '🍞', label: 'Bakery' },
+  { value: '🥫', label: 'Pantry' },
+  { value: '🧴', label: 'Household' },
+] as const;
+
+const isSupportedIcon = (icon: string): boolean => {
+  return SECTION_ICON_OPTIONS.some((option) => option.value === icon);
+};
+
 const starterState = {
   name: '',
   icon: '🛒',
@@ -33,7 +50,7 @@ export const SectionModal = ({
 
     if (section) {
       setName(section.name);
-      setIcon(section.icon);
+      setIcon(isSupportedIcon(section.icon) ? section.icon : starterState.icon);
       setColor(section.color);
     } else {
       setName(starterState.name);
@@ -101,16 +118,20 @@ export const SectionModal = ({
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="form-control">
               <span className="label-text">Icon</span>
-              <input
-                className="input input-bordered"
+              <select
+                className="select select-bordered"
                 value={icon}
                 onChange={(event) => {
                   setIcon(event.target.value);
                   clearError();
                 }}
-                placeholder="🛒"
-                maxLength={10}
-              />
+              >
+                {SECTION_ICON_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.value} {option.label}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className="form-control">

@@ -74,7 +74,7 @@ test.describe.serial('HungryList critical flows', () => {
     await page.getByRole('button', { name: 'Add Section' }).click();
     const addSectionModal = page.locator('.modal.modal-open').first();
     await addSectionModal.getByPlaceholder('Section name').fill(sectionName);
-    await addSectionModal.getByLabel('Icon').fill('📦');
+    await addSectionModal.getByLabel('Icon').selectOption('🧴');
     await addSectionModal.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(page.getByRole('button', { name: `Edit section ${sectionName}`, exact: true })).toBeVisible();
 
