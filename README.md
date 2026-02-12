@@ -131,6 +131,8 @@ services:
 - Keep Docker images and host patched.
 - Rotate backups and validate restore periodically.
 
+See `docs/REVERSE_PROXY.md` for Caddy/Nginx reverse proxy examples.
+
 ## API Error Contract
 
 All non-2xx responses follow:
