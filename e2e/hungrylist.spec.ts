@@ -35,17 +35,17 @@ test.describe.serial('HungryList critical flows', () => {
     await addItemModal.getByPlaceholder('Optional details').fill('2% gallon');
     await addItemModal.getByRole('button', { name: 'Add Item', exact: true }).click();
 
-    await expect(page.getByText(itemName)).toBeVisible();
+    await expect(page.getByRole('button', { name: `Toggle ${itemName}` })).toBeVisible();
 
     await page.getByRole('button', { name: `Edit ${itemName}` }).click();
     const editItemModal = page.locator('.modal.modal-open').first();
     await editItemModal.getByPlaceholder('Optional details').fill('Whole milk');
     await editItemModal.getByRole('button', { name: 'Save Changes', exact: true }).click();
-    await expect(page.getByText('Whole milk')).toBeVisible();
+    await expect(page.getByRole('button', { name: `Toggle ${itemName}` })).toContainText('Whole milk');
 
     await page.getByRole('button', { name: `Toggle ${itemName}` }).click();
     await page.getByRole('button', { name: 'Next Trip' }).click();
-    await expect(page.getByText(itemName)).toBeVisible();
+    await expect(page.getByRole('button', { name: `Toggle ${itemName}` })).toBeVisible();
 
     await page.getByRole('button', { name: `Toggle ${itemName}` }).click();
 
@@ -64,7 +64,7 @@ test.describe.serial('HungryList critical flows', () => {
     await restoreItemModal.getByPlaceholder('e.g. Basmati Rice').fill(itemName.toLowerCase());
     await restoreItemModal.getByPlaceholder('Optional details').fill('restored');
     await restoreItemModal.getByRole('button', { name: 'Add Item', exact: true }).click();
-    await expect(page.getByText(itemName.toLowerCase())).toBeVisible();
+    await expect(page.getByRole('button', { name: `Toggle ${itemName.toLowerCase()}` })).toBeVisible();
 
     await page.getByRole('button', { name: 'Settings' }).click();
 
@@ -91,7 +91,7 @@ test.describe.serial('HungryList critical flows', () => {
     ).toBeVisible();
 
     await page.getByRole('button', { name: 'Create Backup', exact: true }).click();
-    await expect(page.getByText('.json')).toBeVisible();
+    await expect(page.locator('text=.json').first()).toBeVisible();
 
     const themeBefore = await page.locator('html').getAttribute('data-theme');
     await page.getByRole('button', { name: /Switch to .* theme/ }).click();
