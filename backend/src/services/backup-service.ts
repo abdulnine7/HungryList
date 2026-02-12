@@ -1,11 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
 import { env } from '../config/env.js';
 import { db } from '../db/client.js';
-import { toIso } from '../utils/dates.js';
 import { AppError } from '../utils/errors.js';
 import { ensureDirectory } from '../utils/fs.js';
 import { recordHistory } from './history-service.js';
@@ -26,8 +24,15 @@ const backupFileSchema = z.object({
   historyEvents: z.array(z.record(z.any())),
 });
 
-const getTimestampSegment = (): string => {
-  return new Date().toISOString().replace(/[:.]/g, '-');
+const getTimestampSegment = (now: Date): string => {
+  const year = String(now.getUTCFullYear());
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(now.getUTCDate()).padStart(2, '0');
+  const hours = String(now.getUTCHours()).padStart(2, '0');
+  const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+  const millis = String(now.getUTCMilliseconds()).padStart(3, '0');
+
+  return `${year}-${month}-${day}_${hours}${minutes}_${millis}`;
 };
 
 export const listBackups = (): BackupRecord[] => {
@@ -39,9 +44,20 @@ export const listBackups = (): BackupRecord[] => {
 export const createBackup = (reason = 'manual'): BackupRecord => {
   ensureDirectory(env.BACKUP_DIR);
 
-  const id = nanoid();
-  const createdAt = toIso();
-  const filename = `${getTimestampSegment()}-${id}.json`;
+  const now = new Date();
+  const timestampSegment = getTimestampSegment(now);
+  const id = timestampSegment;
+  const createdAt = now.toISOString();
+  const filename = `${timestampSegment}.json`;
+
+  const existing = db
+    .prepare('SELECT id, filename, reason, created_at FROM backups WHERE filename = @filename LIMIT 1')
+    .get({ filename }) as BackupRecord | undefined;
+
+  if (existing) {
+    return existing;
+  }
+
   const filePath = path.join(env.BACKUP_DIR, filename);
 
   const sections = db.prepare('SELECT * FROM sections').all();
