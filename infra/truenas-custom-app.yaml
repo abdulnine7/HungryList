@@ -1,0 +1,36 @@
+services:
+  hungrylist:
+    image: ghcr.io/abdulnine7/hungrylist:latest
+    container_name: hungrylist
+    restart: unless-stopped
+    environment:
+      NODE_ENV: "production"
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      DATA_DIR: "/data"
+      BACKUP_DIR: "/data/backups"
+      FRONTEND_DIST_DIR: "/app/frontend/dist"
+      HUNGRYLIST_PIN: "1234"
+      SESSION_SECRET: "replace_with_long_random_secret"
+      TRUST_PROXY: "true"
+      COOKIE_SECURE: "true"
+    volumes:
+      - /mnt/tank/apps/hungrylist/data:/data
+    ports:
+      - "8080:8080"
+    networks:
+      - hungrylist_net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: hungrylist-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token REPLACE_WITH_CLOUDFLARE_TUNNEL_TOKEN
+    depends_on:
+      - hungrylist
+    networks:
+      - hungrylist_net
+
+networks:
+  hungrylist_net:
+    driver: bridge

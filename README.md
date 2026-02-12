@@ -77,6 +77,12 @@ docker compose up --build -d
 
 App is available at `http://localhost:8080` with frontend and `/api` served from the same container.
 
+## GitHub Releases
+
+- Repository: `https://github.com/abdulnine7/HungryList`
+- Releases: `https://github.com/abdulnine7/HungryList/releases`
+- TrueNAS YAML asset: `truenas-custom-app.yaml`
+
 ## Environment Variables
 
 See `.env.example`.
@@ -105,21 +111,31 @@ Automatic backups:
 
 - Monthly backup runs on the 1st day at 03:00 server time.
 
-## TrueNAS Deployment Notes
+## TrueNAS + cloudflared (Install via YAML)
 
-1. Use `docker-compose.yml` as the app definition.
-2. Mount a persistent dataset to `/data` (or keep named volume if supported).
-3. Keep `APP_PORT=8080` and expose only local network if desired.
-4. Place Cloudflare/reverse proxy in front when internet exposure is needed.
+1. Open the latest release and download `truenas-custom-app.yaml`.
+2. Edit these values in the YAML:
+- `HUNGRYLIST_PIN`
+- `SESSION_SECRET`
+- `/mnt/tank/apps/hungrylist/data` to your TrueNAS dataset path
+- `REPLACE_WITH_CLOUDFLARE_TUNNEL_TOKEN`
+3. In TrueNAS go to `Apps > Discover Apps > Custom App > Install via YAML`.
+4. Paste the YAML content and deploy.
+5. In Cloudflare Zero Trust, create a tunnel hostname pointing to `http://hungrylist:8080`.
 
-Example host volume override:
+Direct download URL (latest release asset):
 
-```yaml
-services:
-  hungrylist:
-    volumes:
-      - /mnt/tank/apps/hungrylist-data:/data
+```bash
+curl -L -o truenas-custom-app.yaml \
+  https://github.com/abdulnine7/HungryList/releases/latest/download/truenas-custom-app.yaml
 ```
+
+Notes:
+
+- Keep the `/data` volume on persistent storage. This holds SQLite DB + backups.
+- If you do not want direct LAN access, remove the `ports` block from the YAML.
+- If you plan to use only HTTPS through Cloudflare, keep `COOKIE_SECURE=true`.
+- If you need HTTP login via LAN IP/port, set `COOKIE_SECURE=false`.
 
 ## Security Hardening Checklist
 
