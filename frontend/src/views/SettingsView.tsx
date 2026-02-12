@@ -11,6 +11,7 @@ export const SettingsView = ({
   onCreateBackup,
   onRestoreBackup,
   onLogoutAll,
+  onLogout,
 }: {
   sections: Section[];
   backups: BackupRecord[];
@@ -20,6 +21,7 @@ export const SettingsView = ({
   onCreateBackup: () => void;
   onRestoreBackup: (backup: BackupRecord) => void;
   onLogoutAll: () => void;
+  onLogout: () => void;
 }) => {
   return (
     <div className="grid gap-4">
@@ -108,10 +110,16 @@ export const SettingsView = ({
       <section className="card border border-base-300 bg-base-100 shadow-sm">
         <div className="card-body">
           <h2 className="text-lg font-semibold">Security</h2>
-          <button type="button" className="btn btn-outline w-full sm:w-fit" onClick={onLogoutAll}>
-            <LogOut size={14} />
-            Log Out All Devices
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className="btn btn-outline w-full sm:w-fit" onClick={onLogout}>
+              <LogOut size={14} />
+              Log Out This Device
+            </button>
+            <button type="button" className="btn btn-outline w-full sm:w-fit" onClick={onLogoutAll}>
+              <LogOut size={14} />
+              Log Out All Devices
+            </button>
+          </div>
         </div>
       </section>
     </div>

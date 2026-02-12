@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { AlertTriangle, Heart, Pencil, Trash2 } from 'lucide-react';
+import type { KeyboardEvent } from 'react';
 
 import type { Item, Section } from '../lib/types';
 
@@ -26,10 +27,19 @@ export const ItemCard = ({
   onEdit: (item: Item) => void;
   onDelete: (item: Item) => void;
 }) => {
+  const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onToggleChecked(item);
+    }
+  };
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onToggleChecked(item)}
+      onKeyDown={handleRowKeyDown}
       className={clsx(
         'card w-full cursor-pointer border border-base-300 bg-base-100 text-left shadow-sm transition-colors hover:border-primary/40',
         { 'opacity-70': item.checked },
@@ -108,6 +118,6 @@ export const ItemCard = ({
           </button>
         </div>
       </div>
-    </button>
+    </div>
   );
 };

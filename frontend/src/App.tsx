@@ -79,6 +79,17 @@ function App() {
     }
   }, [sections, selectedSectionId, setSelectedSectionId]);
 
+  useEffect(() => {
+    if (secondarySectionFilter === 'all') {
+      return;
+    }
+
+    const filterExists = sections.some((section) => section.id === secondarySectionFilter);
+    if (!filterExists) {
+      setSecondarySectionFilter('all');
+    }
+  }, [secondarySectionFilter, sections, setSecondarySectionFilter]);
+
   const itemQueryParams = useMemo(() => {
     if (!listTabs.includes(activeTab)) {
       return null;
@@ -126,6 +137,14 @@ function App() {
 
   const logoutAllMutation = useMutation({
     mutationFn: api.logoutAll,
+    onSuccess: () => {
+      queryClient.clear();
+      window.location.reload();
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: api.logout,
     onSuccess: () => {
       queryClient.clear();
       window.location.reload();
@@ -369,6 +388,14 @@ function App() {
 
                 try {
                   await logoutAllMutation.mutateAsync();
+                } catch (error) {
+                  const typedError = error as ApiError;
+                  notify(typedError.message, 'error');
+                }
+              }}
+              onLogout={async () => {
+                try {
+                  await logoutMutation.mutateAsync();
                 } catch (error) {
                   const typedError = error as ApiError;
                   notify(typedError.message, 'error');
