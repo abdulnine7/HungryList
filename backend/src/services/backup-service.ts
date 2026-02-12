@@ -91,6 +91,34 @@ export const createBackup = (reason = 'manual'): BackupRecord => {
   };
 };
 
+export const deleteBackup = (backupId: string): void => {
+  const target = db
+    .prepare('SELECT id, filename FROM backups WHERE id = ? LIMIT 1')
+    .get(backupId) as
+    | {
+        id: string;
+        filename: string;
+      }
+    | undefined;
+
+  if (!target) {
+    throw new AppError(404, 'BACKUP_NOT_FOUND', 'Backup not found.');
+  }
+
+  const targetPath = path.join(env.BACKUP_DIR, target.filename);
+
+  try {
+    if (fs.existsSync(targetPath)) {
+      fs.unlinkSync(targetPath);
+    }
+  } catch (error) {
+    throw new AppError(500, 'BACKUP_DELETE_FAILED', 'Failed to delete backup file from disk.', String(error));
+  }
+
+  db.prepare('DELETE FROM backups WHERE id = @id').run({ id: backupId });
+  recordHistory('backup', backupId, 'deleted', { filename: target.filename });
+};
+
 export const restoreBackup = (
   backupId: string,
   options?: { createCurrentBackup?: boolean },

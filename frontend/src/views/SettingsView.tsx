@@ -10,6 +10,7 @@ export const SettingsView = ({
   onDeleteSection,
   onCreateBackup,
   onRestoreBackup,
+  onDeleteBackup,
   onLogoutAll,
   onLogout,
 }: {
@@ -20,6 +21,7 @@ export const SettingsView = ({
   onDeleteSection: (section: Section) => void;
   onCreateBackup: () => void;
   onRestoreBackup: (backup: BackupRecord) => void;
+  onDeleteBackup: (backup: BackupRecord) => void;
   onLogoutAll: () => void;
   onLogout: () => void;
 }) => {
@@ -93,14 +95,25 @@ export const SettingsView = ({
                     {new Date(backup.created_at).toLocaleString()} · {backup.reason}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline btn-warning"
-                  onClick={() => onRestoreBackup(backup)}
-                >
-                  <RotateCcw size={14} />
-                  Restore
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline btn-warning"
+                    onClick={() => onRestoreBackup(backup)}
+                  >
+                    <RotateCcw size={14} />
+                    Restore
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline btn-error"
+                    aria-label={`Delete backup ${backup.filename}`}
+                    onClick={() => onDeleteBackup(backup)}
+                  >
+                    <Trash2 size={14} />
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>

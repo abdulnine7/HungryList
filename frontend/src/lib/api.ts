@@ -216,6 +216,12 @@ export const api = {
     return response.data;
   },
 
+  deleteBackup: async (id: string) => {
+    return request<void>(`/api/backups/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
   restoreBackup: async (id: string, createCurrentBackup: boolean) => {
     const response = await request<{ data: { restoredBackupId: string; createdSafetyBackupId?: string } }>(
       `/api/backups/${id}/restore`,

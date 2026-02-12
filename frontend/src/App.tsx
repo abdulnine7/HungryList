@@ -242,6 +242,14 @@ function App() {
     },
   });
 
+  const backupDeleteMutation = useMutation({
+    mutationFn: api.deleteBackup,
+    onSuccess: () => {
+      notify('Backup deleted.', 'success');
+      queryClient.invalidateQueries({ queryKey: ['backups'] });
+    },
+  });
+
   const backupRestoreMutation = useMutation({
     mutationFn: ({ id, createCurrentBackup }: { id: string; createCurrentBackup: boolean }) =>
       api.restoreBackup(id, createCurrentBackup),
@@ -425,6 +433,18 @@ function App() {
               onRestoreBackup={(backup) => {
                 setRestoringBackup(backup);
                 setRestoreModalOpen(true);
+              }}
+              onDeleteBackup={async (backup) => {
+                if (!window.confirm(`Delete backup "${backup.filename}"?`)) {
+                  return;
+                }
+
+                try {
+                  await backupDeleteMutation.mutateAsync(backup.id);
+                } catch (error) {
+                  const typedError = error as ApiError;
+                  notify(typedError.message, 'error');
+                }
               }}
               onLogoutAll={async () => {
                 if (!window.confirm('Log out all trusted devices?')) {

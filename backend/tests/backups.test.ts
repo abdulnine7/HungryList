@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { login, resetDatabase } from './test-utils.js';
@@ -30,5 +32,34 @@ describe('backup collision handling', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('deletes backup from database and disk', async () => {
+    const agent = await login();
+
+    const created = await agent.post('/api/backups').send({});
+    expect(created.status).toBe(201);
+
+    const backupId = created.body.data.id as string;
+    const filename = created.body.data.filename as string;
+    const backupDir = process.env.BACKUP_DIR as string;
+    const filePath = path.join(backupDir, filename);
+    expect(fs.existsSync(filePath)).toBe(true);
+
+    const deleted = await agent.delete(`/api/backups/${backupId}`);
+    expect(deleted.status).toBe(204);
+    expect(fs.existsSync(filePath)).toBe(false);
+
+    const listed = await agent.get('/api/backups');
+    expect(listed.status).toBe(200);
+    expect(listed.body.data).toHaveLength(0);
+  });
+
+  it('returns not found when deleting unknown backup', async () => {
+    const agent = await login();
+
+    const response = await agent.delete('/api/backups/does-not-exist');
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe('BACKUP_NOT_FOUND');
   });
 });
