@@ -90,7 +90,7 @@ test.describe.serial('HungryList critical flows', () => {
       page.getByRole('button', { name: `Edit section ${renamedSectionName}`, exact: true }),
     ).toBeVisible();
 
-    await page.getByRole('button', { name: 'Create Backup' }).click();
+    await page.getByRole('button', { name: 'Create Backup', exact: true }).click();
     await expect(page.getByText('.json')).toBeVisible();
 
     const themeBefore = await page.locator('html').getAttribute('data-theme');
@@ -100,8 +100,8 @@ test.describe.serial('HungryList critical flows', () => {
     expect(themeAfter).not.toBe(themeBefore);
 
     await page.getByRole('button', { name: 'Settings' }).click();
-    await page.getByRole('button', { name: 'Restore' }).first().click();
-    await page.getByRole('button', { name: 'Create Backup & Restore' }).click();
+    await page.getByRole('button', { name: 'Restore', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Create Backup & Restore', exact: true }).click();
 
     await expect(page.getByRole('button', { name: 'Unlock HungryList' })).toBeVisible();
   });
