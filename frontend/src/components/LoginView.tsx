@@ -48,7 +48,7 @@ export const LoginView = ({
                 <input
                   className="input input-bordered text-center text-xl tracking-[0.3em]"
                   inputMode="numeric"
-                  pattern="\\d{4}"
+                  pattern="[0-9]{4}"
                   maxLength={4}
                   value={pin}
                   onChange={(event) => {
