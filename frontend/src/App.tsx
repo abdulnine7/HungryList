@@ -279,7 +279,14 @@ function App() {
   }
 
   if (!authenticated) {
-    return <LoginView onLogin={(payload) => loginMutation.mutateAsync(payload)} loading={loginMutation.isPending} />;
+    return (
+      <LoginView
+        onLogin={async (payload) => {
+          await loginMutation.mutateAsync(payload);
+        }}
+        loading={loginMutation.isPending}
+      />
+    );
   }
 
   const items = itemsQuery.data ?? [];
