@@ -60,7 +60,7 @@ authRouter.post(
     clearFailedAttempts(ip);
 
     const session = createSession(ip, req.headers['user-agent'] || 'unknown', body.trusted);
-    res.cookie(SESSION_COOKIE_NAME, session.token, getSessionCookieOptions(body.trusted));
+    res.cookie(SESSION_COOKIE_NAME, session.token, getSessionCookieOptions(body.trusted, req.secure));
 
     res.json({
       authenticated: true,
@@ -97,7 +97,7 @@ authRouter.post(
   asyncHandler(async (req, res) => {
     const token = req.cookies?.[SESSION_COOKIE_NAME] as string | undefined;
     revokeSessionByToken(token);
-    res.clearCookie(SESSION_COOKIE_NAME, getClearCookieOptions());
+    res.clearCookie(SESSION_COOKIE_NAME, getClearCookieOptions(req.secure));
     res.status(204).send();
   }),
 );
@@ -105,9 +105,9 @@ authRouter.post(
 authRouter.post(
   '/logout-all',
   requireAuth,
-  asyncHandler(async (_req, res) => {
+  asyncHandler(async (req, res) => {
     revokeAllSessions();
-    res.clearCookie(SESSION_COOKIE_NAME, getClearCookieOptions());
+    res.clearCookie(SESSION_COOKIE_NAME, getClearCookieOptions(req.secure));
     res.status(204).send();
   }),
 );
